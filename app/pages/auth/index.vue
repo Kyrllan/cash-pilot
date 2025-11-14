@@ -1,78 +1,99 @@
 <script lang="ts" setup>
 definePageMeta({ layout: "auth" });
 
-const tab = ref(0);
 const items = [
-  { label: "Login", slot: "login" },
-  { label: "Registrar", slot: "register" },
+  { label: "Login", icon: "i-heroicons-user", slot: "login" },
+  { label: "Registrar", icon: "i-heroicons-user-plus", slot: "register" },
 ];
 
-const login = reactive({ email: "", password: "", show: false });
-const register = reactive({ email: "", password: "", show: false });
+const loginData = reactive({ email: "", password: "", showPassword: false });
+const registerData = reactive({
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  showPassword: false,
+  showConfirmPassword: false,
+});
 
-const entrar = () => {
-  if (!login.email || !login.password) return;
+const toast = useToast();
+
+const login = () => {
+  if (!loginData.email || !loginData.password) return;
+  toast.add({
+    title: "Success",
+    description: "The form has been submitted.",
+    color: "success",
+  });
   navigateTo("/");
 };
 
-const registrar = () => {
-  if (!register.email || !register.password) return;
+const register = () => {
+  if (!registerData.email || !registerData.password) return;
   navigateTo("/");
-};
-
-const goRegister = () => {
-  tab.value = 1;
 };
 
 const toggleLoginPassword = () => {
-  login.show = !login.show;
+  loginData.showPassword = !loginData.showPassword;
 };
 
 const toggleRegisterPassword = () => {
-  register.show = !register.show;
+  registerData.showPassword = !registerData.showPassword;
+};
+
+const toggleRegisterConfirmPassword = () => {
+  registerData.showConfirmPassword = !registerData.showConfirmPassword;
 };
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center min-h-[80vh]">
-    <div class="flex items-center gap-3 mb-6">
-      <UIcon name="i-heroicons-banknotes" class="size-8 text-primary-500" />
-      <h1 class="text-3xl font-semibold">Cash Pilot</h1>
-    </div>
+  <div class="flex flex-col items-center justify-center h-screen">
     <UCard class="w-full max-w-md bg-neutral-900 border-neutral-800">
-      <div class="text-center mb-4">
-        <h2 class="text-2xl font-semibold">Acesse sua conta</h2>
+      <div class="flex items-center gap-3 mb-6">
+        <UIcon name="i-heroicons-banknotes" class="size-8 text-primary-500" />
+        <h1 class="text-3xl font-semibold">Cash Pilot</h1>
       </div>
 
-      <UTabs v-model="tab" :items="items" class="mb-4" />
-
-      <div>
-        <template v-if="tab === 0">
-          <UForm @submit.prevent="entrar">
-            <UFormGroup label="E-mail" class="mb-3">
+      <UTabs :items="items" class="mb-4">
+        <template #login>
+          <UForm :state="loginData" class="flex flex-col gap-4" @submit="login">
+            <UFormField label="E-mail" name="email">
               <UInput
-                v-model="login.email"
-                placeholder="seuemail@exemplo.com"
+                v-model="loginData.email"
+                class="w-full"
+                size="lg"
                 icon="i-heroicons-envelope"
               />
-            </UFormGroup>
-
-            <UFormGroup label="Senha" class="mb-1">
-              <div class="flex items-center gap-2">
-                <UInput
-                  v-model="login.password"
-                  :type="login.show ? 'text' : 'password'"
-                  icon="i-heroicons-lock-closed"
-                />
-                <UButton
-                  color="neutral"
-                  variant="ghost"
-                  icon="i-heroicons-eye"
-                  @click="toggleLoginPassword"
-                />
-              </div>
-            </UFormGroup>
-
+            </UFormField>
+            <UFormField label="Senha" name="password">
+              <UInput
+                v-model="loginData.password"
+                placeholder="Password"
+                class="w-full"
+                size="lg"
+                :type="loginData.showPassword ? 'text' : 'password'"
+                :ui="{ trailing: 'pe-1' }"
+              >
+                <template #trailing>
+                  <UButton
+                    color="neutral"
+                    variant="link"
+                    size="sm"
+                    :icon="
+                      loginData.showPassword
+                        ? 'i-lucide-eye-off'
+                        : 'i-lucide-eye'
+                    "
+                    :aria-label="
+                      loginData.showPassword ? 'Hide password' : 'Show password'
+                    "
+                    :aria-pressed="loginData.showPassword"
+                    aria-controls="password"
+                    @click="toggleLoginPassword"
+                  />
+                </template>
+              </UInput>
+            </UFormField>
             <div class="flex justify-end mb-4">
               <NuxtLink
                 to="/auth/forgot"
@@ -81,54 +102,98 @@ const toggleRegisterPassword = () => {
               >
             </div>
 
-            <UButton type="submit" block color="primary" class="h-11"
+            <UButton
+              type="submit"
+              block
+              color="primary"
+              class="h-9 hover:cursor-pointer"
               >Entrar</UButton
             >
           </UForm>
         </template>
 
-        <template v-else>
-          <UForm @submit.prevent="registrar">
-            <UFormGroup label="E-mail" class="mb-3">
+        <template #register>
+          <UForm :state="registerData" class="flex flex-col gap-4">
+            <UFormField label="Nome" name="name">
               <UInput
-                v-model="register.email"
-                placeholder="seuemail@exemplo.com"
-                icon="i-heroicons-envelope"
+                v-model="registerData.name"
+                class="w-full"
+                size="lg"
+                icon="i-heroicons-user"
               />
-            </UFormGroup>
+            </UFormField>
+            <UFormField label="E-mail" name="email">
+              <UInput
+                v-model="registerData.email"
+                class="w-full"
+                size="lg"
+                icon="i-heroicons-lock-closed"
+              />
+            </UFormField>
+            <UFormField label="Senha" name="password">
+              <UInput
+                v-model="registerData.password"
+                class="w-full"
+                size="lg"
+                icon="i-heroicons-lock-closed"
+                :type="registerData.showPassword ? 'text' : 'password'"
+                :ui="{ trailing: 'pe-1' }"
+              >
+                <template #trailing>
+                  <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-heroicons-eye"
+                    :aria-label="
+                      registerData.showPassword
+                        ? 'Hide password'
+                        : 'Show password'
+                    "
+                    :aria-pressed="registerData.showPassword"
+                    aria-controls="password"
+                    @click="toggleRegisterPassword"
+                  />
+                </template>
+              </UInput>
+            </UFormField>
+            <UFormField label="Confirmar Senha" name="confirmPassword">
+              <UInput
+                v-model="registerData.confirmPassword"
+                class="w-full"
+                size="lg"
+                icon="i-heroicons-lock-closed"
+                :type="registerData.showConfirmPassword ? 'text' : 'password'"
+                :ui="{ trailing: 'pe-1' }"
+              >
+                <template #trailing>
+                  <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-heroicons-eye"
+                    :aria-label="
+                      registerData.showConfirmPassword
+                        ? 'Hide confirm password'
+                        : 'Show confirm password'
+                    "
+                    :aria-pressed="registerData.showConfirmPassword"
+                    aria-controls="confirmPassword"
+                    @click="toggleRegisterConfirmPassword"
+                  />
+                </template>
+              </UInput>
+            </UFormField>
 
-            <UFormGroup label="Senha" class="mb-4">
-              <div class="flex items-center gap-2">
-                <UInput
-                  v-model="register.password"
-                  :type="register.show ? 'text' : 'password'"
-                  icon="i-heroicons-lock-closed"
-                />
-                <UButton
-                  color="neutral"
-                  variant="ghost"
-                  icon="i-heroicons-eye"
-                  @click="toggleRegisterPassword"
-                />
-              </div>
-            </UFormGroup>
-
-            <UButton type="submit" block color="primary" class="h-11"
+            <UButton
+              type="submit"
+              block
+              color="primary"
+              class="mt-4 h-9"
+              @click="register"
               >Registrar</UButton
             >
           </UForm>
         </template>
-      </div>
-
-      <div class="text-center text-sm mt-6">
-        <span>Não tem uma conta? </span>
-        <button
-          class="text-primary-400 hover:text-primary-300"
-          @click="goRegister"
-        >
-          Registre-se
-        </button>
-      </div>
+      </UTabs>
     </UCard>
   </div>
 </template>
