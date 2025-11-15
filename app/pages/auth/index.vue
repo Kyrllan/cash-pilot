@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from "zod";
 definePageMeta({ layout: "auth" });
 
 const items = [
@@ -8,7 +9,7 @@ const items = [
 
 const loginData = reactive({ email: "", password: "", showPassword: false });
 const registerData = reactive({
-  name: "",
+  full_name: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -17,20 +18,79 @@ const registerData = reactive({
 });
 
 const toast = useToast();
+const supabase = useSupabaseClient();
 
-const login = () => {
-  if (!loginData.email || !loginData.password) return;
+const loginSchema = z.object({
+  email: z.string().email({ message: "E-mail inválido" }),
+  password: z
+    .string()
+    .min(6, { message: "Senha deve ter ao menos 6 caracteres" }),
+});
+
+const registerSchema = z
+  .object({
+    full_name: z.string().min(2, { message: "Nome muito curto" }),
+    email: z.string().email({ message: "E-mail inválido" }),
+    password: z
+      .string()
+      .min(6, { message: "Senha deve ter ao menos 6 caracteres" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem",
+    path: ["confirmPassword"],
+  });
+
+const login = async () => {
+  const { error } = await supabase.auth.signInWithPassword({
+    email: loginData.email,
+    password: loginData.password,
+  });
+
+  if (error) {
+    toast.add({
+      title: "Erro ao entrar",
+      description: error.message,
+      color: "error",
+    });
+    return;
+  }
+
   toast.add({
-    title: "Success",
-    description: "The form has been submitted.",
+    title: "Login realizado",
+    description: "Bem-vindo!",
     color: "success",
   });
+
   navigateTo("/");
 };
 
-const register = () => {
-  if (!registerData.email || !registerData.password) return;
-  navigateTo("/");
+const register = async () => {
+  const { error } = await supabase.auth.signUp({
+    email: registerData.email,
+    password: registerData.password,
+    options: {
+      data: {
+        full_name: registerData.full_name,
+      },
+      emailRedirectTo: `${window.location.origin}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    toast.add({
+      title: "Erro no cadastro",
+      description: error.message,
+      color: "error",
+    });
+    return;
+  }
+
+  toast.add({
+    title: "Conta criada",
+    description: "Verifique seu e-mail para confirmar o cadastro.",
+    color: "success",
+  });
 };
 
 const toggleLoginPassword = () => {
@@ -56,7 +116,12 @@ const toggleRegisterConfirmPassword = () => {
 
       <UTabs :items="items" class="mb-4">
         <template #login>
-          <UForm :state="loginData" class="flex flex-col gap-4" @submit="login">
+          <UForm
+            :state="loginData"
+            class="flex flex-col gap-4 mt-4"
+            :schema="loginSchema"
+            @submit="login"
+          >
             <UFormField label="E-mail" name="email">
               <UInput
                 v-model="loginData.email"
@@ -113,10 +178,15 @@ const toggleRegisterConfirmPassword = () => {
         </template>
 
         <template #register>
-          <UForm :state="registerData" class="flex flex-col gap-4">
+          <UForm
+            :state="registerData"
+            class="flex flex-col gap-4 mt-4"
+            :schema="registerSchema"
+            @submit="register"
+          >
             <UFormField label="Nome" name="name">
               <UInput
-                v-model="registerData.name"
+                v-model="registerData.full_name"
                 class="w-full"
                 size="lg"
                 icon="i-heroicons-user"
@@ -143,7 +213,11 @@ const toggleRegisterConfirmPassword = () => {
                   <UButton
                     color="neutral"
                     variant="ghost"
-                    icon="i-heroicons-eye"
+                    :icon="
+                      registerData.showPassword
+                        ? 'i-lucide-eye-off'
+                        : 'i-lucide-eye'
+                    "
                     :aria-label="
                       registerData.showPassword
                         ? 'Hide password'
@@ -169,7 +243,11 @@ const toggleRegisterConfirmPassword = () => {
                   <UButton
                     color="neutral"
                     variant="ghost"
-                    icon="i-heroicons-eye"
+                    :icon="
+                      registerData.showConfirmPassword
+                        ? 'i-lucide-eye-off'
+                        : 'i-lucide-eye'
+                    "
                     :aria-label="
                       registerData.showConfirmPassword
                         ? 'Hide confirm password'
@@ -183,12 +261,7 @@ const toggleRegisterConfirmPassword = () => {
               </UInput>
             </UFormField>
 
-            <UButton
-              type="submit"
-              block
-              color="primary"
-              class="mt-4 h-9"
-              @click="register"
+            <UButton type="submit" block color="primary" class="mt-4 h-9"
               >Registrar</UButton
             >
           </UForm>
