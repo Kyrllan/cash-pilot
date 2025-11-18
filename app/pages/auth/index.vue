@@ -8,6 +8,7 @@ const items = [
 ];
 
 const loginData = reactive({ email: "", password: "", showPassword: false });
+const LoginLoading = ref(false);
 const registerData = reactive({
   full_name: "",
   email: "",
@@ -42,6 +43,7 @@ const registerSchema = z
   });
 
 const login = async () => {
+  LoginLoading.value = true;
   const { error } = await supabase.auth.signInWithPassword({
     email: loginData.email,
     password: loginData.password,
@@ -53,6 +55,7 @@ const login = async () => {
       description: error.message,
       color: "error",
     });
+    LoginLoading.value = false;
     return;
   }
 
@@ -61,7 +64,7 @@ const login = async () => {
     description: "Bem-vindo!",
     color: "success",
   });
-
+  LoginLoading.value = false;
   navigateTo("/");
 };
 
@@ -172,6 +175,7 @@ const toggleRegisterConfirmPassword = () => {
               block
               color="primary"
               class="h-9 hover:cursor-pointer"
+              :loading="LoginLoading"
               >Entrar</UButton
             >
           </UForm>

@@ -11,6 +11,7 @@ export default defineNuxtConfig({
       login: '/auth',
       callback: '/auth/callback',
       exclude: ['/auth', '/auth/**']
-    }
+    },
+    types: false
   }
 })
