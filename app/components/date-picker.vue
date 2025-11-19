@@ -2,32 +2,23 @@
 import { ref, watch } from "vue";
 import { CalendarDate, type DateValue } from "@internationalized/date";
 
-// Props opcionais
-const props = defineProps<{
-  label?: string;
-  placeholder?: string;
-}>();
+// v-model externo (string ISO ou null)
+const model = defineModel<string | null | undefined>();
 
-// Valor externo do componente (string ISO ou null)
-const model = defineModel<string | null>({ default: null });
+// valor interno do calendário (CalendarDate)
+const internal = ref<DateValue | null | undefined>(null);
 
-// Mostra/esconde calendário
-const isOpen = ref(false);
-
-// Valor interno do calendário (CalendarDate)
-const calendarValue = ref<DateValue | null>(null);
-
-// Converte model → CalendarDate (quando o parent muda)
+// sempre que o v-model externo mudar → atualiza o calendário interno
 watch(
   () => model.value,
-  (newIso) => {
-    if (!newIso) {
-      calendarValue.value = null;
+  (iso) => {
+    if (!iso) {
+      internal.value = null;
       return;
     }
 
-    const d = new Date(newIso);
-    calendarValue.value = new CalendarDate(
+    const d = new Date(iso);
+    internal.value = new CalendarDate(
       d.getFullYear(),
       d.getMonth() + 1,
       d.getDate()
@@ -36,46 +27,37 @@ watch(
   { immediate: true }
 );
 
-// Formata ISO -> dd/mm/aaaa
-const formatDate = (iso: string | null) => {
+// formatar ISO → dd/mm/yyyy
+const formatDate = (iso: string | null | undefined) => {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("pt-BR");
 };
 
-// Quando o usuário escolhe a data no calendário
-const updateCalendar = (date: DateValue | null) => {
-  calendarValue.value = date;
-  isOpen.value = false;
+// quando o usuário seleciona no calendário
+const onSelect = (date: any) => {
+  internal.value = date;
 
   if (!date) {
     model.value = null;
     return;
   }
 
-  // CalendarDate -> JS Date -> ISO
-  const jsDate = new Date(date.year, date.month - 1, date.day);
-  model.value = jsDate.toISOString();
+  const js = new Date(date.year, date.month - 1, date.day);
+  model.value = js.toISOString();
 };
 </script>
 
 <template>
-  <div class="relative w-full">
-    <UPopover>
-      <UInput
-        :model-value="formatDate(model)"
-        :label="props.label"
-        :placeholder="props.placeholder"
-        readonly
-        class="cursor-pointer"
-        icon="i-heroicons-calendar-days-20-solid"
-        @click="isOpen = !isOpen"
-      />
-      <template #content>
-        <UCalendar
-          :model-value="calendarValue"
-          @update:model-value="updateCalendar"
-        />
-      </template>
-    </UPopover>
-  </div>
+  <UPopover class="w-full">
+    <UInput
+      :model-value="formatDate(model)"
+      icon="i-heroicons-calendar-days-20-solid"
+      readonly
+      class="cursor-pointer"
+    />
+
+    <template #content>
+      <UCalendar :v-model="internal" @update:model-value="onSelect" />
+    </template>
+  </UPopover>
 </template>
