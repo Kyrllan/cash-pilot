@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import Filter from "./components/filter.vue";
-import NoData from "./components/no-data.vue";
-import Form from "./components/form.vue";
+import Filter from "../../components/goals/filter.vue";
+import NoData from "../../components/goals/no-data.vue";
+import Form from "../../components/goals/form.vue";
 
-import type { Category, Goal } from "./types";
+import type { GoalCategory, Goal } from "../../types";
 
 const supabase = useSupabaseClient();
-const categories = ref<Category[]>([]);
+const categories = ref<GoalCategory[]>([]);
 const modal = ref(false);
 const modalTitle = ref("Adicionar Meta");
 const form = ref<Goal>({
@@ -31,7 +31,6 @@ const fetchCategories = async () => {
     console.log(error);
     return;
   }
-  console.log(data);
   categories.value = data;
 };
 </script>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Category, Goal } from "../types";
+import type { Category, Goal } from "../../types";
 
 import DatePicker from "@/components/date-picker.vue";
 
