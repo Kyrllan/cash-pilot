@@ -145,7 +145,7 @@ const initAddValue = (goal: GoalSelect) => {
     total_value: goal.total_value,
     deadline: goal.deadline,
     category_id: goal.category_id,
-    user_id: user.value?.sub,
+    user_id: user.value?.sub || "",
   };
   modal.value = true;
 };
