@@ -34,7 +34,9 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center h-screen">
+  <div
+    class="px-4 flex flex-col items-center justify-center h-screen bg-[url('/images/login-background.png')] bg-cover bg-center"
+  >
     <UCard class="w-full max-w-md bg-neutral-900 border-neutral-800">
       <div class="flex items-center gap-3 mb-6">
         <UIcon name="i-heroicons-key" class="size-8 text-primary-500" />
