@@ -2,11 +2,6 @@
 import { useCurrencyInput } from "vue-currency-input";
 
 type CurrencyInputProps = {
-  locale?: string;
-  precision?: number;
-  currency?: string;
-  label: string;
-  name: string;
   modelValue: number | null;
 };
 
@@ -20,7 +15,5 @@ const { formattedValue, inputRef } = useCurrencyInput({
 </script>
 
 <template>
-  <UFormField :label="label" :name="name">
-    <UInput ref="inputRef" :value="formattedValue" size="lg" class="w-full" />
-  </UFormField>
+  <UInput ref="inputRef" :value="formattedValue" size="lg" class="w-full" />
 </template>

@@ -141,6 +141,7 @@ const toggleRegisterConfirmPassword = () => {
                   class="w-full"
                   size="lg"
                   icon="i-heroicons-envelope"
+                  placeholder="E-mail"
                 />
               </UFormField>
               <UFormField label="Senha" name="password">
@@ -148,6 +149,7 @@ const toggleRegisterConfirmPassword = () => {
                   v-model="loginData.password"
                   placeholder="Password"
                   class="w-full"
+                  icon="i-heroicons-lock-closed"
                   size="lg"
                   :type="loginData.showPassword ? 'text' : 'password'"
                   :ui="{ trailing: 'pe-1' }"

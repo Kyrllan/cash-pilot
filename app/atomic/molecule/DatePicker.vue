@@ -2,21 +2,12 @@
 import { ref, watch } from "vue";
 import { CalendarDate, type DateValue } from "@internationalized/date";
 
-// --------------------------
-// MODELO EXTERNO ISO STRING
-// --------------------------
 const model = defineModel<string | null>({
   default: null,
 });
 
-// --------------------------
-// MODELO INTERNO (DateValue)
-// --------------------------
 const internal = ref<DateValue | null>(null);
 
-// --------------------------
-// Sync do model externo → interno
-// --------------------------
 watch(
   () => model.value,
   (iso) => {
@@ -35,17 +26,11 @@ watch(
   { immediate: true }
 );
 
-// --------------------------
-// Formatador para o input
-// --------------------------
 const format = (iso: string | null): string => {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("pt-BR");
 };
 
-// --------------------------
-// Handler da seleção do calendário
-// --------------------------
 function onSelect(value: DateValue | null) {
   if (!value) {
     model.value = null;

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import NoData from "../../components/goals/NoData.vue";
-import Form from "../../components/goals/CreateGoal.vue";
-import GoalItem from "../../components/goals/Goaltem.vue";
+import { ref, onMounted, watch } from "vue";
+import NoData from "@/atomic/organism/NoData.vue";
+import CreateGoal from "@/atomic/organism/CreateGoal.vue";
+import EditGoal from "@/atomic/organism/EditGoal.vue";
+import GoalItem from "@/atomic/organism/Goaltem.vue";
 
 import type { GoalCategory, GoalCreate, GoalSelect } from "../../types";
 
@@ -10,8 +11,8 @@ const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const toast = useToast();
 const categories = ref<GoalCategory[]>([]);
-const modal = ref(false);
-const modalTitle = ref("Adicionar Meta");
+const modalCreate = ref(false);
+const modalEdit = ref(false);
 const form = ref<GoalCreate>({
   id: 0,
   name: "",
@@ -23,7 +24,8 @@ const form = ref<GoalCreate>({
   user_id: "",
 });
 const goals = ref<GoalSelect[]>([]);
-const goalFilterTab = ref(0);
+const goalSelected = ref<GoalSelect>({} as GoalSelect);
+const goalFilterTab = ref();
 
 const items = [
   {
@@ -45,7 +47,9 @@ onMounted(() => {
   fetchGoals();
 });
 
-const isCreating = computed(() => modalTitle.value === "Adicionar Meta");
+watch(goalFilterTab, (tabIndex) => {
+  filterGoals(tabIndex);
+});
 
 const fetchCategories = async () => {
   const { data, error } = await supabase.from("category_goal").select("*");
@@ -57,7 +61,6 @@ const fetchCategories = async () => {
 };
 
 const initCreateGoal = () => {
-  modalTitle.value = "Adicionar Meta";
   form.value = {
     id: 0,
     name: "",
@@ -68,7 +71,7 @@ const initCreateGoal = () => {
     category_id: 1,
     user_id: "",
   };
-  modal.value = true;
+  modalCreate.value = true;
 };
 
 const createGoal = async () => {
@@ -96,7 +99,7 @@ const createGoal = async () => {
     description: "Meta criada com sucesso.",
     color: "success",
   });
-  modal.value = false;
+  modalCreate.value = false;
   fetchGoals();
 };
 
@@ -113,8 +116,8 @@ const fetchGoals = async () => {
     });
     return;
   }
-  console.log(data);
   goals.value = data;
+  filterGoals(goalFilterTab.value);
 };
 
 const deleteGoal = async (id: number) => {
@@ -136,18 +139,68 @@ const deleteGoal = async (id: number) => {
 };
 
 const initAddValue = (goal: GoalSelect) => {
-  modalTitle.value = "Adicionar Valor";
-  form.value = {
+  goalSelected.value = {
     id: goal.id,
     name: goal.name,
-    increment_value: 0,
-    current_value: 0,
+    current_value: goal.current_value,
     total_value: goal.total_value,
     deadline: goal.deadline,
+    category: goal.category,
+    created_at: goal.created_at,
     category_id: goal.category_id,
-    user_id: user.value?.sub || "",
+    category: {
+      id: goal.category.id,
+      name: goal.category.name,
+      image_url: goal.category.image_url,
+      icon: goal.category.icon,
+    },
+    user_id: goal.user_id,
   };
-  modal.value = true;
+  modalEdit.value = true;
+};
+
+const addValue = async () => {
+  const { error } = await supabase
+    .from("goals")
+    .update({
+      current_value: goalSelected.value.current_value,
+    })
+    .eq("id", goalSelected.value.id);
+  if (error) {
+    toast.add({
+      title: "Erro ao adicionar valor",
+      description: error.message,
+      color: "error",
+    });
+    return;
+  }
+  toast.add({
+    title: "Valor adicionado",
+    description: "Valor adicionado com sucesso.",
+    color: "success",
+  });
+  modalEdit.value = false;
+  fetchGoals();
+};
+
+const filterGoals = (tabIndex: string) => {
+  if (tabIndex === "0") {
+    goals.value = [...goals.value].sort((a, b) => {
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
+  }
+  if (tabIndex === "1") {
+    goals.value = [...goals.value].sort((a, b) => {
+      return new Date(b.deadline).getTime() - new Date(a.deadline).getTime();
+    });
+  }
+  if (tabIndex === "2") {
+    goals.value = [...goals.value].sort((a, b) => {
+      return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+    });
+  }
 };
 </script>
 
@@ -162,7 +215,6 @@ const initAddValue = (goal: GoalSelect) => {
     <div class="py-4 w-150">
       <UTabs v-model="goalFilterTab" :items="items" class="mb-4" />
     </div>
-    {{ goalFilterTab }}
 
     <div v-if="goals.length === 0">
       <NoData />
@@ -173,12 +225,12 @@ const initAddValue = (goal: GoalSelect) => {
         :key="goal.id"
         :goal="goal"
         @delete="deleteGoal"
-        @add-value="addValue"
+        @add-value="initAddValue"
       />
     </div>
     <UModal
-      v-model:open="modal"
-      :title="modalTitle"
+      v-model:open="modalCreate"
+      title="Adicionar Meta"
       :close="{
         color: 'primary',
         variant: 'outline',
@@ -186,14 +238,28 @@ const initAddValue = (goal: GoalSelect) => {
       }"
     >
       <template #body>
-        <Form
+        <CreateGoal
           v-model="form"
           :categories="categories"
-          :is-creating="isCreating"
-          @submit="isCreating ? createGoal() : ''"
-          @cancel="modal = false"
-          @increment="form.current_value += form.increment_value"
-          @decrement="form.current_value -= form.increment_value"
+          @submit="createGoal()"
+          @cancel="modalCreate = false"
+        />
+      </template>
+    </UModal>
+    <UModal
+      v-model:open="modalEdit"
+      title="Adicionar Valor"
+      :close="{
+        color: 'primary',
+        variant: 'outline',
+        class: 'rounded-full',
+      }"
+    >
+      <template #body>
+        <EditGoal
+          v-model="goalSelected"
+          @submit="addValue"
+          @cancel="modalEdit = false"
         />
       </template>
     </UModal>

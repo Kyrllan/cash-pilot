@@ -2,8 +2,8 @@
 import type { GoalCategory, GoalCreate } from "../../types";
 import { z } from "zod";
 
-import DatePicker from "~/components/input/DatePicker.vue";
-import CurrencyInput from "../input/CurrencyInput.vue";
+import DatePicker from "~/atomic/molecule/DatePicker.vue";
+import CurrencyInput from "~/atomic/molecule/CurrencyInput.vue";
 
 type Props = {
   categories: GoalCategory[];
@@ -57,13 +57,13 @@ defineEmits(["submit", "cancel"]);
       </UFormField>
     </div>
 
-    <CurrencyInput
-      v-model="form.current_value"
-      label="Valor Atual"
-      name="currentValue"
-    />
+    <UFormField label="Valor Atual" name="currentValue">
+      <CurrencyInput v-model="form.current_value" />
+    </UFormField>
 
-    <CurrencyInput v-model="form.total_value" label="Meta" name="totalValue" />
+    <UFormField label="Meta" name="totalValue">
+      <CurrencyInput v-model="form.total_value" />
+    </UFormField>
 
     <div class="flex justify-end gap-4 mt-4">
       <UButton

@@ -57,5 +57,10 @@ export default defineNuxtConfig({
       navigateFallback: '/',
       globPatterns: ['**/*.{js,css,html,png,svg,ico,json}']
     }
-  }
+  },
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark',
+    storageKey: 'nuxt-color-mode'
+  },
 })
