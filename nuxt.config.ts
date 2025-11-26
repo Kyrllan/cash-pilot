@@ -24,10 +24,10 @@ export default defineNuxtConfig({
     types: "app/supabase/types.ts"
   },
   runtimeConfig: {
-  public: {
-    supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
-    supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_KEY
-    }
+    public: {
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
+      supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_KEY || ''
+      }
   },
   pwa: {
     manifest: {
