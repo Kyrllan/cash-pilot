@@ -29,7 +29,7 @@ const goalFilterTab = ref();
 
 const items = [
   {
-    label: "Mais Recentes",
+    label: "Recentes",
     slot: "recent",
   },
   {
@@ -37,7 +37,7 @@ const items = [
     slot: "deadline",
   },
   {
-    label: "Mais Proximas de concluir",
+    label: "Proximas de concluir",
     slot: "closest",
   },
 ];
@@ -198,7 +198,10 @@ const filterGoals = (tabIndex: string) => {
   }
   if (tabIndex === "2") {
     goals.value = [...goals.value].sort((a, b) => {
-      return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      const progressA = a.current_value / a.total_value;
+      const progressB = b.current_value / b.total_value;
+
+      return progressB - progressA;
     });
   }
 };
@@ -206,14 +209,9 @@ const filterGoals = (tabIndex: string) => {
 
 <template>
   <div>
-    <div
-      class="pt-4 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center"
-    >
+    <div class="pt-4 flex gap-3 justify-between items-end">
       <span class="text-2xl font-bold">Minhas Metas</span>
-      <UButton
-        icon="i-heroicons-plus"
-        class="w-full sm:w-auto"
-        @click="initCreateGoal"
+      <UButton icon="i-heroicons-plus" @click="initCreateGoal"
         >Criar Meta</UButton
       >
     </div>
@@ -224,7 +222,7 @@ const filterGoals = (tabIndex: string) => {
       enter-from-class="opacity-0"
       leave-to-class="opacity-0"
     >
-      <div class="py-4 w-full" v-if="goals.length !== 0">
+      <div class="py-4" v-if="goals.length !== 0">
         <UTabs
           v-model="goalFilterTab"
           :items="items"

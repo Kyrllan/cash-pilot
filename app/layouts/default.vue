@@ -142,8 +142,8 @@ const handleLogout = async () => {
     <!-- MAIN CONTENT -->
     <main
       :class="[
-        'flex-1 transition-all duration-300 min-h-screen py-6 pb-20', // espaço para bottom bar
-        'ml-0 md:ml-64', // mobile = sem sidebar | desktop = com
+        'overflow-auto pt-4 pb-20 md:pb-0 w-full',
+        'ml-0 md:ml-64',
         isCollapsed ? 'md:ml-20' : 'md:ml-64',
       ]"
     >
