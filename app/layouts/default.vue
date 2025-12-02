@@ -53,11 +53,11 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-neutral-900 text-white flex">
-    <!-- SIDEBAR -->
+  <div class="h-screen bg-neutral-900 text-white flex">
+    <!-- SIDEBAR (desktop only) -->
     <aside
       :class="[
-        'flex flex-col border-r border-neutral-800 bg-neutral-950 transition-all duration-300 fixed top-0 left-0 h-screen z-50',
+        'hidden md:flex flex-col border-r border-neutral-800 bg-neutral-950 transition-all duration-300 fixed top-0 left-0 h-screen z-50',
         isCollapsed ? 'w-20' : 'w-64',
       ]"
     >
@@ -86,7 +86,7 @@ const handleLogout = async () => {
         </div>
 
         <button
-          class="p-2 rounded-lg text-neutral-400 hover:bg-neutral-800 hover:text-white hover:cursor-pointer transition-colors flex items-center"
+          class="p-2 rounded-lg text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors flex items-center"
           @click="toggleSidebar"
         >
           <UIcon
@@ -100,11 +100,12 @@ const handleLogout = async () => {
         </button>
       </div>
 
+      <!-- MENU LATERAL -->
       <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
         <NuxtLink
           v-for="item in mainNavItems"
           :key="item.label"
-          :to="item.to || '#'"
+          :to="item.to"
           :class="[
             'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors',
             item.active
@@ -122,7 +123,7 @@ const handleLogout = async () => {
         <NuxtLink
           v-for="item in bottomNavItems"
           :key="item.label"
-          :to="item.to || '#'"
+          :to="item.to"
           :class="[
             'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors',
             item.active
@@ -138,15 +139,48 @@ const handleLogout = async () => {
       </div>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <main
       :class="[
-        'flex-1 transition-all duration-300 min-h-screen py-6',
-        isCollapsed ? 'ml-20' : 'ml-64',
+        'flex-1 transition-all duration-300 min-h-screen py-6 pb-20', // espaço para bottom bar
+        'ml-0 md:ml-64', // mobile = sem sidebar | desktop = com
+        isCollapsed ? 'md:ml-20' : 'md:ml-64',
       ]"
     >
       <UContainer>
         <slot />
       </UContainer>
     </main>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 w-full bg-neutral-950 border-t border-neutral-800 flex justify-around py-3 z-50"
+    >
+      <NuxtLink
+        v-for="item in mainNavItems"
+        :key="item.label"
+        :to="item.to"
+        :class="[
+          'flex flex-col items-center text-neutral-400',
+          item.active && 'text-primary-500',
+        ]"
+      >
+        <UIcon :name="item.icon" class="size-6" />
+        <span class="text-xs mt-1">{{ item.label }}</span>
+      </NuxtLink>
+      <NuxtLink
+        v-for="item in bottomNavItems"
+        :key="item.label"
+        :to="item.to"
+        :class="[
+          'flex flex-col items-center text-neutral-400',
+          item.active && 'text-primary-500',
+        ]"
+        @click="item.label === 'Sair' && handleLogout()"
+      >
+        <UIcon :name="item.icon" class="size-6" />
+        <span class="text-xs mt-1">{{ item.label }}</span>
+      </NuxtLink>
+    </nav>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-neutral-400 rounded-lg min-h-[300px]"
+    class="p-4 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-neutral-400 rounded-lg min-h-[300px]"
   >
     <UIcon
       name="i-heroicons-currency-dollar"

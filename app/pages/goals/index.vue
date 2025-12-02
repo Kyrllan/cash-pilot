@@ -206,28 +206,64 @@ const filterGoals = (tabIndex: string) => {
 
 <template>
   <div>
-    <div class="pt-4 flex justify-between items-center">
+    <div
+      class="pt-4 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center"
+    >
       <span class="text-2xl font-bold">Minhas Metas</span>
-      <UButton icon="i-heroicons-plus" @click="initCreateGoal"
+      <UButton
+        icon="i-heroicons-plus"
+        class="w-full sm:w-auto"
+        @click="initCreateGoal"
         >Criar Meta</UButton
       >
     </div>
-    <div class="py-4 w-150">
-      <UTabs v-model="goalFilterTab" :items="items" class="mb-4" />
-    </div>
+    <Transition
+      appear
+      :enter-active-class="'transition-opacity duration-200'"
+      :leave-active-class="'transition-opacity duration-200'"
+      enter-from-class="opacity-0"
+      leave-to-class="opacity-0"
+    >
+      <div class="py-4 w-full" v-if="goals.length !== 0">
+        <UTabs
+          v-model="goalFilterTab"
+          :items="items"
+          class="mb-4 overflow-x-auto"
+        />
+      </div>
+    </Transition>
 
-    <div v-if="goals.length === 0">
-      <NoData />
-    </div>
-    <div class="grid grid-cols-4 gap-4">
-      <GoalItem
-        v-for="goal in goals"
-        :key="goal.id"
-        :goal="goal"
-        @delete="deleteGoal"
-        @add-value="initAddValue"
-      />
-    </div>
+    <Transition
+      mode="out-in"
+      :enter-active-class="'transition-opacity duration-200'"
+      :leave-active-class="'transition-opacity duration-200'"
+      enter-from-class="opacity-0"
+      leave-to-class="opacity-0"
+    >
+      <div class="py-4" v-if="goals.length === 0">
+        <NoData />
+      </div>
+      <TransitionGroup
+        v-else
+        tag="div"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+        :enter-active-class="'transition duration-200 ease-out'"
+        :leave-active-class="'transition duration-200 ease-in'"
+        enter-from-class="opacity-0 scale-95"
+        enter-to-class="opacity-100 scale-100"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-95"
+        move-class="transition-transform duration-200"
+      >
+        <GoalItem
+          v-for="goal in goals"
+          :key="goal.id"
+          :goal="goal"
+          @delete="deleteGoal"
+          @add-value="initAddValue"
+        />
+      </TransitionGroup>
+    </Transition>
     <UModal
       v-model:open="modalCreate"
       title="Adicionar Meta"
@@ -238,12 +274,14 @@ const filterGoals = (tabIndex: string) => {
       }"
     >
       <template #body>
-        <CreateGoal
-          v-model="form"
-          :categories="categories"
-          @submit="createGoal()"
-          @cancel="modalCreate = false"
-        />
+        <div class="p-2 sm:p-4">
+          <CreateGoal
+            v-model="form"
+            :categories="categories"
+            @submit="createGoal()"
+            @cancel="modalCreate = false"
+          />
+        </div>
       </template>
     </UModal>
     <UModal
@@ -256,11 +294,13 @@ const filterGoals = (tabIndex: string) => {
       }"
     >
       <template #body>
-        <EditGoal
-          v-model="goalSelected"
-          @submit="addValue"
-          @cancel="modalEdit = false"
-        />
+        <div class="p-2 sm:p-4">
+          <EditGoal
+            v-model="goalSelected"
+            @submit="addValue"
+            @cancel="modalEdit = false"
+          />
+        </div>
       </template>
     </UModal>
   </div>
