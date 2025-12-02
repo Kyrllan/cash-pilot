@@ -12,7 +12,7 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/icons/pwa-192x192.png' }
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/icons/pwa-180x180.png' }
       ]
     }
   },
@@ -42,7 +42,7 @@ export default defineNuxtConfig({
       name: 'Cash Pilot',
       short_name: 'Cash Pilot',
       theme_color: '#02DF72',
-      background_color: '#ffffff',
+      background_color: '#02DF72',
       display: 'standalone',
       start_url: '/',
       scope: '/',

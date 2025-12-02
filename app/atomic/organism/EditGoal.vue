@@ -4,6 +4,9 @@ import DisplayTextField from "../molecule/DisplayTextField.vue";
 import DisplayDateField from "@/atomic/molecule/DisplayDateField.vue";
 import DisplayCurrencyField from "@/atomic/molecule/DisplayCurrencyField.vue";
 import CurrencyInput from "@/atomic/molecule/CurrencyInput.vue";
+import { useDate } from "../../composables/useDate";
+
+const { formatDate } = useDate();
 
 const form = defineModel<GoalSelect>({ required: true });
 defineEmits(["submit", "cancel"]);
@@ -21,16 +24,37 @@ const decrement = () => {
 
 <template>
   <UForm :state="form" class="flex flex-col gap-4" @submit="$emit('submit')">
-    <img
-      :src="form.category.image_url"
-      alt="Meta"
-      class="w-full h-60 object-cover rounded-lg"
-    />
-    <div class="pt-2 grid grid-cols-2 w-full">
-      <DisplayTextField label="Meta" :value="form.name" />
-      <DisplayTextField label="Categoria" :value="form.category.name" />
+    <div class="relative w-full overflow-hidden">
+      <img
+        :src="form.category?.image_url"
+        :alt="`Imagem da categoria ${form.name}`"
+        class="relative w-full h-60 object-cover rounded-lg brightness-50"
+      />
+      <div
+        class="absolute top-2 right-2 bg-neutral-900 text-sm text-white p-1 px-2 rounded-lg"
+      >
+        {{ formatDate(new Date(form.deadline)) }}
+      </div>
+      <div class="flex absolute bottom-2 left-2 text-white px-2 rounded-lg">
+        <div
+          class="flex justify-between items-center text-sm font-medium text-green-300"
+        >
+          <UIcon
+            :name="`i-heroicons-${form.category?.icon || 'currency-dollar'}`"
+            class="size-6 text-white"
+          />
+        </div>
+
+        <h2 class="pl-2 text-xl font-bold">
+          {{ form.name }}
+        </h2>
+      </div>
     </div>
-    <DisplayDateField label="Prazo" :value="form.deadline" />
+
+    <div class="pt-2 grid grid-cols-2 w-full">
+      <DisplayCurrencyField label="Valor atual" :value="form.current_value" />
+      <DisplayCurrencyField label="Meta" :value="form.total_value" />
+    </div>
 
     <div class="pt-2 flex gap-2">
       <div class="flex align-end gap-2">
@@ -46,11 +70,6 @@ const decrement = () => {
       <UFormField>
         <UButton icon="i-heroicons-plus" @click="increment" />
       </UFormField>
-    </div>
-
-    <div class="pt-2 grid grid-cols-2 w-full">
-      <DisplayCurrencyField label="Valor atual" :value="form.current_value" />
-      <DisplayCurrencyField label="Meta" :value="form.total_value" />
     </div>
 
     <div class="flex justify-end gap-4 mt-4">

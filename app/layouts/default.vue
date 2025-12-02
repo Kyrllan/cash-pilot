@@ -53,15 +53,13 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <div class="h-screen bg-neutral-900 text-white flex">
-    <!-- SIDEBAR (desktop only) -->
+  <div class="h-screen bg-neutral-900 text-white grid md:grid-cols-[auto_1fr]">
     <aside
       :class="[
-        'hidden md:flex flex-col border-r border-neutral-800 bg-neutral-950 transition-all duration-300 fixed top-0 left-0 h-screen z-50',
+        'hidden md:flex flex-col border-r border-neutral-800 bg-neutral-950 transition-all duration-300 h-screen',
         isCollapsed ? 'w-20' : 'w-64',
       ]"
     >
-      <!-- HEADER DO SIDEBAR -->
       <div
         :class="[
           'flex items-center gap-3 px-2 py-3 border-b border-neutral-800',
@@ -100,7 +98,6 @@ const handleLogout = async () => {
         </button>
       </div>
 
-      <!-- MENU LATERAL -->
       <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
         <NuxtLink
           v-for="item in mainNavItems"
@@ -139,20 +136,12 @@ const handleLogout = async () => {
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main
-      :class="[
-        'overflow-auto pt-4 pb-20 md:pb-0 w-full',
-        'ml-0 md:ml-64',
-        isCollapsed ? 'md:ml-20' : 'md:ml-64',
-      ]"
-    >
+    <main class="overflow-auto pt-4 pb-20 md:pb-0 w-full">
       <UContainer>
         <slot />
       </UContainer>
     </main>
 
-    <!-- MOBILE BOTTOM NAV -->
     <nav
       class="md:hidden fixed bottom-0 left-0 w-full bg-neutral-950 border-t border-neutral-800 flex justify-around py-3 z-50"
     >

@@ -27,52 +27,58 @@ defineEmits(["delete", "add-value"]);
 </script>
 
 <template>
-  <div class="rounded-lg bg-green-700/80 text-white shadow-lg overflow-hidden">
-    <div class="h-40 w-full overflow-hidden">
+  <div class="rounded-lg bg-neutral-950 text-white shadow-lg overflow-hidden">
+    <div class="relative h-40 w-full overflow-hidden">
       <img
         :src="goal.category?.image_url"
         :alt="`Imagem da categoria ${goal.name}`"
-        class="object-cover w-full h-full"
+        class="object-cover w-full h-full brightness-50"
       />
+      <div
+        class="absolute top-2 right-2 bg-neutral-900 text-sm text-white p-1 px-2 rounded-lg"
+      >
+        {{ formatDate(new Date(goal.deadline)) }}
+      </div>
+      <div class="flex absolute bottom-2 left-2 text-white px-2 rounded-lg">
+        <div
+          class="flex justify-between items-center text-sm font-medium text-green-300"
+        >
+          <UIcon
+            :name="`i-heroicons-${goal.category?.icon || 'currency-dollar'}`"
+            class="size-6 text-white"
+          />
+        </div>
+
+        <h2 class="pl-2 text-xl font-bold">
+          {{ goal.name }}
+        </h2>
+      </div>
     </div>
 
-    <div class="p-4">
-      <div
-        class="flex justify-between items-center text-sm font-medium text-green-300"
-      >
-        <span>Prazo: {{ formatDate(new Date(goal.deadline)) }}</span>
-        <UIcon
-          :name="`i-heroicons-${goal.category?.icon || 'currency-dollar'}`"
-          class="size-6 text-green-300"
-        />
+    <div class="pt-4 px-4 flex items-center justify-between text-md">
+      <div>
+        <span class="text-gray-300">{{
+          formatCurrency(goal.current_value)
+        }}</span>
+        <span class="text-gray-300">
+          / {{ formatCurrency(goal.total_value) }}</span
+        >
       </div>
+    </div>
 
-      <h2 class="text-xl font-bold">
-        {{ goal.name }}
-      </h2>
-
-      <div class="pt-4">
-        <div class="flex items-center justify-between text-lg">
-          <div>
-            <span class="text-green-300">{{
-              formatCurrency(goal.current_value)
-            }}</span>
-            <span class="text-green-300">
-              / {{ formatCurrency(goal.total_value) }}</span
-            >
-          </div>
-          <div>
-            <span class="text-sm font-bold text-green-300"
-              >{{ percentage }}%</span
-            >
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <UProgress v-model="percentage" />
+    <div class="pt-2 px-4">
+      <div class="flex items-center justify-end text-lg">
+        <div>
+          <span class="text-sm font-bold text-white">{{ percentage }}%</span>
         </div>
       </div>
 
+      <div class="flex items-center gap-3">
+        <UProgress v-model="percentage" />
+      </div>
+    </div>
+
+    <div class="p-4 pt-2">
       <div class="pt-6 flex gap-3">
         <UButton
           label="Adicionar Valor"
