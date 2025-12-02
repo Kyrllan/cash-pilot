@@ -4,10 +4,15 @@ export default defineNuxtConfig({
     head: {
       title: 'Cash Pilot',
       meta: [
-        { name: 'description', content: 'Cash Pilot is a cash management tool that helps you keep track of your cash flow.' }
+        { name: 'description', content: 'Cash Pilot is a cash management tool that helps you keep track of your cash flow.' },
+        { name: 'theme-color', content: '#02DF72' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+        { name: 'apple-mobile-web-app-title', content: 'Cash Pilot' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/icons/pwa-192x192.png' }
       ]
     }
   },
@@ -30,6 +35,9 @@ export default defineNuxtConfig({
       }
   },
   pwa: {
+    registerType: 'autoUpdate',
+    devOptions: { enabled: true },
+    registerWebManifestInRouteRules: true,
     manifest: {
       name: 'Cash Pilot',
       short_name: 'Cash Pilot',
@@ -37,26 +45,37 @@ export default defineNuxtConfig({
       background_color: '#ffffff',
       display: 'standalone',
       start_url: '/',
+      scope: '/',
       icons: [
         {
           src: '/icons/pwa-192x192.png',
           sizes: '192x192',
-          type: 'image/png'
+          type: 'image/png',
+          purpose: 'any maskable'
         },
         {
           src: '/icons/pwa-512x512.png',
           sizes: '512x512',
-          type: 'image/png'
+          type: 'image/png',
+          purpose: 'any maskable'
         }
       ]
     },
-
-    registerType: 'autoUpdate',
-
     workbox: {
-      navigateFallback: '/',
-      globPatterns: ['**/*.{js,css,html,png,svg,ico,json}']
-    }
+      runtimeCaching: [
+        {
+          urlPattern: 'https://example.com/.*',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'api-cache',
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 86400,
+            },
+          },
+        },
+      ],
+    },
   },
   colorMode: {
     preference: 'dark',
