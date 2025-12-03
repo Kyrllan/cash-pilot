@@ -13,7 +13,7 @@ const schema = z.object({
 
 const submit = async () => {
   const { error } = await supabase.auth.resetPasswordForEmail(state.email, {
-    redirectTo: `${window.location.origin}/auth/reset#`,
+    redirectTo: `${import.meta.env.VITE_NUXT_REDIRECT_URL}/auth/reset#`,
   });
 
   if (error) {

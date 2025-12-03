@@ -76,7 +76,9 @@ const register = async () => {
       data: {
         full_name: registerData.full_name,
       },
-      emailRedirectTo: `${window.location.origin}/auth/callback`,
+      emailRedirectTo: `${
+        import.meta.env.VITE_NUXT_REDIRECT_URL
+      }/auth/callback`,
     },
   });
 

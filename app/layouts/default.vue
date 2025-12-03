@@ -136,14 +136,14 @@ const handleLogout = async () => {
       </div>
     </aside>
 
-    <main class="overflow-auto pt-4 pb-20 md:pb-0 w-full">
+    <main class="overflow-auto pt-4 pb-24 md:pb-0 w-full">
       <UContainer>
         <slot />
       </UContainer>
     </main>
 
     <nav
-      class="md:hidden fixed bottom-0 left-0 w-full bg-neutral-950 border-t border-neutral-800 flex justify-around py-3 z-50"
+      class="md:hidden fixed bottom-0 left-0 w-full bg-neutral-950 border-t border-neutral-800 flex justify-around py-5 z-50"
     >
       <NuxtLink
         v-for="item in mainNavItems"
