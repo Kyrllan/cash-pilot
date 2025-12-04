@@ -4,12 +4,14 @@ import NoData from "@/atomic/organism/NoData.vue";
 import CreateGoal from "@/atomic/organism/CreateGoal.vue";
 import EditGoal from "@/atomic/organism/EditGoal.vue";
 import GoalItem from "@/atomic/organism/Goaltem.vue";
+import { useBreakpoint } from "@/composables/useBreakpoint";
 
 import type { GoalCategory, GoalCreate, GoalSelect } from "../../types";
 
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const toast = useToast();
+const { isMobile } = useBreakpoint();
 const categories = ref<GoalCategory[]>([]);
 const modalCreate = ref(false);
 const modalEdit = ref(false);
@@ -265,6 +267,7 @@ const filterGoals = (tabIndex: string) => {
     <UModal
       v-model:open="modalCreate"
       title="Adicionar Meta"
+      :fullscreen="isMobile"
       :close="{
         color: 'primary',
         variant: 'outline',
@@ -285,6 +288,7 @@ const filterGoals = (tabIndex: string) => {
     <UModal
       v-model:open="modalEdit"
       title="Adicionar Valor"
+      :fullscreen="isMobile"
       :close="{
         color: 'primary',
         variant: 'outline',
