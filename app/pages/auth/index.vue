@@ -7,7 +7,11 @@ const items = [
   { label: "Registrar", icon: "i-heroicons-user-plus", slot: "register" },
 ];
 
-const loginData = reactive({ email: "", password: "", showPassword: false });
+const loginData = reactive({
+  email: "johndoe@cashpilot.com",
+  password: "User@123",
+  showPassword: false,
+});
 const LoginLoading = ref(false);
 const registerData = reactive({
   full_name: "",

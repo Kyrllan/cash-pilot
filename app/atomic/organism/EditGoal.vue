@@ -28,6 +28,8 @@ const decrement = () => {
       <img
         :src="form.category?.image_url"
         :alt="`Imagem da categoria ${form.name}`"
+        loading="lazy"
+        decoding="async"
         class="relative w-full h-60 object-cover rounded-lg brightness-50"
       />
       <div
