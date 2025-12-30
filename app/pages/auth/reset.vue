@@ -80,7 +80,7 @@ const toggleConfirm = () => {
           <UInput
             v-model="state.password"
             class="w-full"
-            size="lg"
+            size="xl"
             :type="state.showPassword ? 'text' : 'password'"
             :ui="{ trailing: 'pe-1' }"
           >
@@ -105,7 +105,7 @@ const toggleConfirm = () => {
           <UInput
             v-model="state.confirm"
             class="w-full"
-            size="lg"
+            size="xl"
             :type="state.showConfirm ? 'text' : 'password'"
             :ui="{ trailing: 'pe-1' }"
           >

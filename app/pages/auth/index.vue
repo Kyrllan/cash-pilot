@@ -145,7 +145,7 @@ const toggleRegisterConfirmPassword = () => {
                 <UInput
                   v-model="loginData.email"
                   class="w-full"
-                  size="lg"
+                  size="xl"
                   icon="i-heroicons-envelope"
                   placeholder="E-mail"
                 />
@@ -156,7 +156,7 @@ const toggleRegisterConfirmPassword = () => {
                   placeholder="Password"
                   class="w-full"
                   icon="i-heroicons-lock-closed"
-                  size="lg"
+                  size="xl"
                   :type="loginData.showPassword ? 'text' : 'password'"
                   :ui="{ trailing: 'pe-1' }"
                 >
@@ -212,7 +212,7 @@ const toggleRegisterConfirmPassword = () => {
                 <UInput
                   v-model="registerData.full_name"
                   class="w-full"
-                  size="lg"
+                  size="xl"
                   icon="i-heroicons-user"
                 />
               </UFormField>
@@ -220,7 +220,7 @@ const toggleRegisterConfirmPassword = () => {
                 <UInput
                   v-model="registerData.email"
                   class="w-full"
-                  size="lg"
+                  size="xl"
                   icon="i-heroicons-envelope"
                 />
               </UFormField>
@@ -228,7 +228,7 @@ const toggleRegisterConfirmPassword = () => {
                 <UInput
                   v-model="registerData.password"
                   class="w-full"
-                  size="lg"
+                  size="xl"
                   icon="i-heroicons-lock-closed"
                   :type="registerData.showPassword ? 'text' : 'password'"
                   :ui="{ trailing: 'pe-1' }"
@@ -258,7 +258,7 @@ const toggleRegisterConfirmPassword = () => {
                 <UInput
                   v-model="registerData.confirmPassword"
                   class="w-full"
-                  size="lg"
+                  size="xl"
                   icon="i-heroicons-lock-closed"
                   :type="registerData.showConfirmPassword ? 'text' : 'password'"
                   :ui="{ trailing: 'pe-1' }"

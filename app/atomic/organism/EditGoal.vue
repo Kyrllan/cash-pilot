@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import type { GoalSelect } from "../../types";
-import DisplayTextField from "../molecule/DisplayTextField.vue";
-import DisplayDateField from "@/atomic/molecule/DisplayDateField.vue";
 import DisplayCurrencyField from "@/atomic/molecule/DisplayCurrencyField.vue";
 import CurrencyInput from "@/atomic/molecule/CurrencyInput.vue";
 import { useDate } from "../../composables/useDate";
+import type { Goal } from "~/core/domain/entities/Goal";
 
 const { formatDate } = useDate();
 
-const form = defineModel<GoalSelect>({ required: true });
+const form = defineModel<Goal>({ required: true });
 defineEmits(["submit", "cancel"]);
 
 const incrementValue = ref(0);

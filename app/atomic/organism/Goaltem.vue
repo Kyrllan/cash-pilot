@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { GoalSelect } from "../../types";
+import type { Goal } from "~/core/domain/entities/Goal";
 import { useDate } from "../../composables/useDate";
 
 const { formatDate } = useDate();
 
 type GoalItemProps = {
-  goal: GoalSelect;
+  goal: Goal;
 };
 
 const percentage = computed(() => {

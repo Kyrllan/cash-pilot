@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type { GoalCategory, GoalCreate } from "../../types";
 import { z } from "zod";
 
 import DatePicker from "~/atomic/molecule/DatePicker.vue";
 import CurrencyInput from "~/atomic/molecule/CurrencyInput.vue";
+import type { GoalCategory } from "~/core/domain/entities/GoalCategory";
+import type { Goal } from "~/core/domain/entities/Goal";
 
 type Props = {
   categories: GoalCategory[];
@@ -23,7 +24,7 @@ const goalSchema = z.object({
     .min(0.01, { message: "Meta deve ser maior que zero" }),
 });
 
-const form = defineModel<GoalCreate>({
+const form = defineModel<Goal>({
   required: true,
 });
 
@@ -52,7 +53,7 @@ const categoryImage = computed(() => {
     </div>
 
     <UFormField label="Nome" name="name">
-      <UInput v-model="form.name" class="w-full" size="lg" />
+      <UInput v-model="form.name" class="w-full" size="xl" />
     </UFormField>
 
     <div class="flex gap-4 w-full">
@@ -67,6 +68,7 @@ const categoryImage = computed(() => {
           value-key="id"
           label-key="name"
           class="w-full"
+          size="xl"
         />
       </UFormField>
     </div>

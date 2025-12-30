@@ -52,6 +52,7 @@ function onSelect(value: DateValue | null) {
       class="cursor-pointer"
       :model-value="format(model)"
       icon="i-heroicons-calendar-days-20-solid"
+      size="xl"
     />
 
     <template #content>

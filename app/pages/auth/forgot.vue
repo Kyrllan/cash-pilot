@@ -53,7 +53,7 @@ const submit = async () => {
           <UInput
             v-model="state.email"
             class="w-full"
-            size="lg"
+            size="xl"
             icon="i-heroicons-envelope"
           />
         </UFormField>

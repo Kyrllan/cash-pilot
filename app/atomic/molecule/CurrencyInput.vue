@@ -15,5 +15,5 @@ const { formattedValue, inputRef } = useCurrencyInput({
 </script>
 
 <template>
-  <UInput ref="inputRef" :value="formattedValue" size="lg" class="w-full" />
+  <UInput ref="inputRef" :value="formattedValue" size="xl" class="w-full" />
 </template>
